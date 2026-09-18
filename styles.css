@@ -1,0 +1,652 @@
+/* ============================================================
+   Francesca Ervin — portfolio
+   Warm paper, rust ink, a grid you can see.
+   Palette in OKLCH; contrast verified against WCAG AA.
+   ============================================================ */
+
+:root{
+  color-scheme: light;
+
+  /* Ground */
+  --paper:      oklch(0.967 0.012 78);
+  --paper-deep: oklch(0.935 0.018 72);
+  --clay:       oklch(0.880 0.040 60);
+
+  /* Ink */
+  --ink:        oklch(0.220 0.022 48);
+  --ink-soft:   oklch(0.440 0.020 48);
+
+  /* The committed colour */
+  --rust:       oklch(0.480 0.150 40);   /* drenched surfaces */
+  --rust-ink:   oklch(0.430 0.145 38);   /* small text + links on paper */
+  --wheat:      oklch(0.900 0.045 68);   /* secondary text on rust */
+  --sand:       oklch(0.830 0.060 62);   /* rules + labels on rust */
+
+  --rule:       color-mix(in oklab, var(--ink) 16%, transparent);
+  --rule-firm:  color-mix(in oklab, var(--ink) 34%, transparent);
+
+  /* Type */
+  --sans: "Karla", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --disp: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --t--1: 0.8125rem;
+  --t-0:  1.0625rem;
+  --t-1:  clamp(1.25rem, 1.05rem + 0.9vw, 1.7rem);
+  --t-2:  clamp(1.7rem,  1.25rem + 2.1vw, 2.75rem);
+  --t-3:  clamp(2.3rem,  1.4rem + 4.1vw, 4.25rem);
+
+  /* Space */
+  --gutter: clamp(1.25rem, 4.5vw, 5rem);
+  --bay:    clamp(4.5rem, 10vw, 11rem);
+  --col-gap: clamp(1.25rem, 3vw, 3rem);
+
+  --measure: 68ch;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);   /* ease-out-quint */
+}
+
+/* ---------- reset ---------- */
+*, *::before, *::after{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference){ html{ scroll-behavior: smooth; } }
+
+body{
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--t-0);
+  font-weight: 400;
+  line-height: 1.62;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3{ margin: 0; font-family: var(--disp); line-height: 1.02; }
+p, ul, ol, dl, dd{ margin: 0; }
+ul, ol{ padding: 0; list-style: none; }
+img{ max-width: 100%; }
+[hidden]{ display: none !important; }
+
+a{ color: inherit; }
+::selection{ background: var(--rust); color: var(--paper); }
+
+:where(a, button):focus-visible{
+  outline: 3px solid var(--rust-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.hero :where(a):focus-visible,
+.contact :where(a):focus-visible{ outline-color: var(--clay); }
+
+.sr-only{
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip{
+  position: absolute; left: var(--gutter); top: 0; z-index: 100;
+  transform: translateY(-140%);
+  background: var(--ink); color: var(--paper);
+  padding: 0.7rem 1.1rem; font-size: var(--t--1); font-weight: 600;
+  text-decoration: none;
+}
+.skip:focus{ transform: translateY(0.5rem); }
+
+/* ---------- shared scaffolding ---------- */
+.wrap{
+  width: 100%;
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.eyebrow{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 112, "wght" 600;
+  font-size: var(--t--1);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Section headers: a rule, a big label, a quiet gloss. */
+.sec-head{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding-top: 1.1rem;
+  border-top: 2px solid var(--ink);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+.sec-title{
+  font-variation-settings: "wdth" 118, "wght" 800;
+  font-size: var(--t-2);
+  letter-spacing: -0.015em;
+}
+.sec-meta{
+  font-size: var(--t--1);
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   Top bar
+   ============================================================ */
+.bar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem var(--gutter);
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  background: var(--paper);
+  border-bottom: 1px solid transparent;
+  transition: background 240ms var(--ease), border-color 240ms var(--ease),
+              color 240ms var(--ease);
+}
+/* While the drenched hero is behind it, the bar disappears into the rust. */
+.bar[data-over="rust"]{
+  background: var(--rust);
+  color: var(--paper);
+}
+.bar[data-over="paper"]{
+  border-bottom-color: var(--rule);
+}
+
+.bar-mark{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 110, "wght" 800;
+  font-size: var(--t--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.bar-mark span{ font-variation-settings: "wdth" 110, "wght" 400; }
+
+.bar-nav{
+  display: flex;
+  align-items: center;
+  gap: clamp(0.85rem, 2.2vw, 2rem);
+  font-size: var(--t--1);
+  letter-spacing: 0.06em;
+}
+.bar-nav a{
+  text-decoration: none;
+  padding-block: 0.35rem;
+  border-bottom: 1px solid transparent;
+  transition: border-color 200ms var(--ease), opacity 200ms var(--ease);
+}
+.bar-nav a:hover{ border-bottom-color: currentColor; }
+.bar-cta{ font-weight: 700; }
+
+@media (max-width: 34rem){
+  .bar-nav a:not(.bar-cta){ display: none; }
+}
+
+/* ============================================================
+   Hero — drenched
+   ============================================================ */
+.hero{
+  position: relative;
+  background: var(--rust);
+  color: var(--paper);
+  padding-block: clamp(3.5rem, 9vw, 8rem) clamp(3rem, 6vw, 5rem);
+  overflow: hidden;
+}
+
+/* The visible grid: twelve hairlines, barely there. */
+.hero-rules{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    color-mix(in oklab, var(--paper) 13%, transparent) 0 1px,
+    transparent 1px calc(100% / 12)
+  );
+  background-size: 100% 100%;
+  opacity: 0.85;
+}
+
+.hero-inner{ position: relative; container-type: inline-size; }
+
+.hero .eyebrow{ color: var(--sand); margin-bottom: clamp(1.75rem, 4vw, 3rem); }
+
+.hero-name{
+  font-variation-settings: "wdth" 108, "wght" 800;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  /* "FRANCESCA" measures 6.7645em at this width and weight, so 14.6% of the
+     container sets the line flush to the measure at every viewport.
+     The vw line is the fallback where container units are unsupported. */
+  font-size: clamp(2.4rem, 12.4vw, 9rem);
+  font-size: min(14.6cqi, 14rem);
+}
+.hero-line{ display: block; }
+
+/* "ERVIN" is short, so the statement settles into the space it leaves:
+   pushed right on wide screens, plain left on narrow ones. */
+.hero-note{
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 42ch;
+  font-size: clamp(1rem, 0.92rem + 0.35vw, 1.2rem);
+  line-height: 1.6;          /* light-on-dark gets extra air */
+  color: var(--wheat);
+  text-wrap: pretty;
+}
+
+/* Once there is room to the right of "ERVIN", the statement moves into it
+   and rises to sit on the same optical line. */
+@media (min-width: 64rem){
+  .hero-note{
+    margin-left: auto;
+    margin-top: -5cqi;
+  }
+}
+
+.masthead{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.5rem clamp(1.5rem, 4vw, 3.5rem);
+  margin-top: clamp(2.5rem, 6vw, 4.5rem);
+  padding-top: 1.25rem;
+  border-top: 1px solid color-mix(in oklab, var(--paper) 42%, transparent);
+}
+.masthead dt{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 110, "wght" 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sand);
+  margin-bottom: 0.3rem;
+}
+.masthead dd{ font-size: 0.975rem; line-height: 1.45; }
+.masthead a{
+  text-decoration-color: color-mix(in oklab, var(--paper) 45%, transparent);
+  text-underline-offset: 0.25em;
+}
+.masthead a:hover{ text-decoration-color: currentColor; }
+
+/* ============================================================
+   Statement
+   ============================================================ */
+.statement{ padding-block: var(--bay); }
+
+.col-lede{ grid-column: 1 / span 7; }
+.col-facts{ grid-column: 9 / span 4; }
+
+@media (max-width: 62rem){
+  .col-lede, .col-facts{ grid-column: 1 / -1; }
+}
+
+.lede{
+  font-size: var(--t-1);
+  line-height: 1.42;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+.facts{
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--rule-firm);
+}
+.facts dt{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 110, "wght" 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rust-ink);
+  margin-bottom: 0.25rem;
+}
+.facts dd{ font-size: 0.95rem; line-height: 1.5; color: var(--ink-soft); }
+
+/* ============================================================
+   Experience ledger
+   ============================================================ */
+.ledger{
+  background: var(--paper-deep);
+  padding-block: var(--bay);
+}
+
+.entries{ counter-reset: entry; }
+
+.entry{
+  display: grid;
+  grid-template-columns: minmax(0, 3.2fr) minmax(0, 8.8fr);
+  column-gap: var(--col-gap);
+  row-gap: 1rem;
+  padding-block: clamp(2rem, 4vw, 3.25rem);
+  border-top: 1px solid var(--rule);
+}
+.entry:first-child{ border-top-color: var(--rule-firm); }
+.entry:last-child{ border-bottom: 1px solid var(--rule); }
+
+@media (max-width: 52rem){
+  .entry{ grid-template-columns: 1fr; }
+}
+
+.entry-aside{ align-self: start; }
+
+.entry-years{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 104, "wght" 600;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust-ink);
+  margin-bottom: 0.7rem;
+}
+.entry-org{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 100, "wght" 700;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+.entry-place{
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-top: 0.3rem;
+}
+
+.entry-role{
+  font-variation-settings: "wdth" 112, "wght" 800;
+  font-size: var(--t-1);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.entry-gloss{
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin-top: 0.45rem;
+}
+
+.entry-list{
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+  max-width: var(--measure);
+}
+.entry-list li{
+  position: relative;
+  padding-left: 1.5rem;
+  line-height: 1.58;
+  text-wrap: pretty;
+}
+.entry-list li::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.65rem;
+  height: 1px;
+  background: var(--rust);
+}
+
+/* ============================================================
+   Capabilities
+   ============================================================ */
+.caps{ padding-block: var(--bay); }
+
+.caps-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: clamp(2rem, 4vw, 3.5rem) var(--col-gap);
+}
+
+.cap-title{
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-variation-settings: "wdth" 108, "wght" 700;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule-firm);
+  text-wrap: balance;
+}
+.cap-num{
+  font-variation-settings: "wdth" 100, "wght" 500;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--rust-ink);
+}
+
+.cap-list{
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   Education
+   ============================================================ */
+.edu{
+  background: var(--paper-deep);
+  padding-block: var(--bay);
+}
+
+.edu-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: clamp(2rem, 4vw, 4rem) var(--col-gap);
+}
+
+.degree{
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule-firm);
+}
+.degree-years{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 104, "wght" 600;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--rust-ink);
+  margin-bottom: 0.8rem;
+}
+.degree-name{
+  font-variation-settings: "wdth" 110, "wght" 700;
+  font-size: var(--t-1);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.degree-school{
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  max-width: 30ch;
+}
+.degree-honors{
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--rust-ink);
+  font-weight: 600;
+}
+
+/* ============================================================
+   Contact — drenched again, to close the loop
+   ============================================================ */
+.contact{
+  position: relative;
+  background: var(--rust);
+  color: var(--paper);
+  padding-block: var(--bay);
+  overflow: hidden;
+}
+.contact-inner{ position: relative; container-type: inline-size; }
+
+.contact-h{
+  font-variation-settings: "wdth" 118, "wght" 800;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  /* "LET\2019S TALK" measures 6.5998em here; 11.8% of the container sets it
+     just short of the full measure, so it answers the hero without matching it. */
+  font-size: clamp(2.2rem, 10vw, 7.5rem);
+  font-size: min(11.8cqi, 12rem);
+}
+
+/* The closing statement on the left, the way to act on it on the right. */
+.contact-cols{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 4vw, 4.5rem);
+  align-items: start;
+  margin-top: clamp(2.25rem, 4vw, 3.25rem);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  border-top: 1px solid color-mix(in oklab, var(--paper) 42%, transparent);
+}
+@media (max-width: 52rem){
+  .contact-cols{ grid-template-columns: 1fr; gap: 2rem; }
+}
+
+.contact-copy{
+  max-width: 40ch;
+  color: var(--wheat);
+  line-height: 1.6;
+  font-size: var(--t-0);
+  text-wrap: pretty;
+}
+
+.contact-mail{
+  display: inline-block;
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: clamp(1.2rem, 0.85rem + 1.9vw, 2.35rem);
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 2px;
+  transition: background-size 320ms var(--ease);
+}
+.contact-mail:hover{ background-size: 0% 2px; }
+
+.contact-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+.btn{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.85rem 1.4rem;
+  background: var(--paper);
+  color: var(--rust-ink);
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 106, "wght" 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 200ms var(--ease), color 200ms var(--ease),
+              transform 200ms var(--ease);
+}
+.btn:hover{ background: var(--clay); transform: translateY(-2px); }
+.btn-meta{
+  font-variation-settings: "wdth" 100, "wght" 400;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+.btn-quiet{
+  background: transparent;
+  color: var(--paper);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--paper) 55%, transparent);
+}
+.btn-quiet:hover{
+  background: color-mix(in oklab, var(--paper) 14%, transparent);
+  color: var(--paper);
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.foot{
+  background: var(--ink);
+  color: var(--clay);
+  padding-block: 2.25rem;
+  padding-bottom: calc(2.25rem + env(safe-area-inset-bottom, 0px));
+  font-size: var(--t--1);
+}
+.foot-inner{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem 2rem;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   Motion
+   ============================================================ */
+/* Scoped to .js: with no JavaScript there is nothing to un-hide, so the
+   content must never start invisible. */
+.js .reveal{
+  opacity: 0;
+  transform: translateY(1.1rem);
+}
+.js .reveal.is-in{
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 760ms var(--ease) var(--d, 0ms),
+    transform 760ms var(--ease) var(--d, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .js .reveal{ opacity: 1; transform: none; }
+  .js .reveal.is-in{ transition: none; }
+  .btn:hover{ transform: none; }
+  *, *::before, *::after{
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Anchors clear the sticky bar. */
+[id]{ scroll-margin-top: 5rem; }
+
+/* ============================================================
+   Print — the page should survive a PDF export
+   ============================================================ */
+@media print{
+  .bar, .skip, .hero-rules, .contact-actions{ display: none; }
+  body{ background: #fff; color: #000; font-size: 11pt; }
+  .hero, .contact{ background: #fff; color: #000; }
+  .hero .eyebrow, .hero-note, .contact-copy,
+  .masthead dt, .masthead dd{ color: #000; }
+  .js .reveal{ opacity: 1; transform: none; }
+  .entry{ break-inside: avoid; }
+  .hero-name{ font-size: 32pt; }
+}
