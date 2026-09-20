@@ -452,9 +452,85 @@ a{ color: inherit; }
 }
 
 /* ============================================================
+   Selected work
+   Same two-column ledger as Experience, but the right-hand column
+   carries prose instead of bullets, so the cases read as short
+   accounts rather than another list.
+   ============================================================ */
+.work{ padding-block: var(--bay); }
+
+.case{
+  display: grid;
+  grid-template-columns: minmax(0, 3.2fr) minmax(0, 8.8fr);
+  column-gap: var(--col-gap);
+  row-gap: 1rem;
+  padding-block: clamp(2.25rem, 4.5vw, 3.5rem);
+  border-top: 1px solid var(--rule);
+}
+.case:first-child{ border-top-color: var(--rule-firm); }
+.case:last-child{ border-bottom: 1px solid var(--rule); }
+
+@media (max-width: 52rem){
+  .case{ grid-template-columns: 1fr; }
+}
+
+.case-aside{ align-self: start; }
+.case-client{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 100, "wght" 700;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.case-kind{
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 104, "wght" 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust-ink);
+  margin-top: 0.6rem;
+}
+
+.case-title{
+  font-variation-settings: "wdth" 112, "wght" 800;
+  font-size: var(--t-1);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin-bottom: 1.2rem;
+}
+.case-body p{
+  max-width: var(--measure);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.case-body p + p{ margin-top: 0.9rem; }
+
+.case-shows{
+  margin-top: 1.6rem !important;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.case-shows span{
+  display: block;
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 110, "wght" 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rust-ink);
+  margin-bottom: 0.4rem;
+}
+
+/* ============================================================
    Capabilities
    ============================================================ */
-.caps{ padding-block: var(--bay); }
+.caps{
+  background: var(--paper-deep);
+  padding-block: var(--bay);
+}
 
 .caps-grid{
   display: grid;
@@ -493,10 +569,7 @@ a{ color: inherit; }
 /* ============================================================
    Education
    ============================================================ */
-.edu{
-  background: var(--paper-deep);
-  padding-block: var(--bay);
-}
+.edu{ padding-block: var(--bay); }
 
 .edu-grid{
   display: grid;
