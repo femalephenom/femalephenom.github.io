@@ -309,11 +309,26 @@ a{ color: inherit; }
    ============================================================ */
 .statement{ padding-block: var(--bay); }
 
-.col-lede{ grid-column: 1 / span 7; }
-.col-facts{ grid-column: 9 / span 4; }
+/* Portrait left, words right. The photo earns the space: communications
+   work is a trust business and people want to see who they'd be hiring. */
+.portrait{
+  grid-column: 1 / span 5;
+  margin: 0;
+}
+.portrait img{
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: var(--clay);   /* holds the space while the file loads */
+}
+
+.col-words{ grid-column: 7 / span 6; }
 
 @media (max-width: 62rem){
-  .col-lede, .col-facts{ grid-column: 1 / -1; }
+  .portrait, .col-words{ grid-column: 1 / -1; }
+  .portrait{ max-width: 24rem; }
 }
 
 .lede{
@@ -325,9 +340,11 @@ a{ color: inherit; }
 
 .facts{
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: 1.5rem clamp(1.25rem, 3vw, 2.5rem);
   align-content: start;
-  padding-top: 0.6rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-top: 1rem;
   border-top: 1px solid var(--rule-firm);
 }
 .facts dt{
