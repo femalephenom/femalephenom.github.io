@@ -192,8 +192,31 @@ a{ color: inherit; }
 .bar-nav a:hover{ border-bottom-color: currentColor; }
 .bar-cta{ font-weight: 700; }
 
+/* The one boxed control in the bar. Everything is drawn from currentColor,
+   so it inverts by itself when the bar flips between rust and paper. */
+.bar-link{
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.8rem;
+  border: 1px solid color-mix(in oklab, currentColor 42%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, currentColor 42%, transparent);
+  font-family: var(--disp);
+  font-variation-settings: "wdth" 104, "wght" 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color 200ms var(--ease), background 200ms var(--ease);
+}
+.bar-link:hover{
+  border-color: currentColor;
+  border-bottom-color: currentColor;
+  background: color-mix(in oklab, currentColor 12%, transparent);
+}
+
+/* On a phone the section anchors go, but the two ways to reach her stay. */
 @media (max-width: 34rem){
-  .bar-nav a:not(.bar-cta){ display: none; }
+  .bar-nav a:not(.bar-cta):not(.bar-link){ display: none; }
+  .bar-link{ padding: 0.35rem 0.6rem; letter-spacing: 0.06em; }
 }
 
 /* ============================================================
