@@ -337,6 +337,13 @@ a{ color: inherit; }
   max-width: var(--measure);
   text-wrap: pretty;
 }
+/* The reframe paragraph sits a step down from the opening claim. */
+.lede-second{
+  margin-top: 1.1em;
+  font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
 
 .facts{
   display: grid;
